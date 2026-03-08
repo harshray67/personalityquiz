@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHO ACTUALLY ARE YOU?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --black: #0D0D0D;
+    --hot-pink: #FF2D6B;
+    --electric-yellow: #FFE033;
+    --mint: #00E5A0;
+    --lavender: #C4B5FD;
+    --orange: #FF6B35;
+    --sky: #38BDF8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    padding: 40px 40px 0;
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--electric-yellow);
+    display: inline-block;
+    padding: 4px 12px;
+    margin-bottom: 16px;
+  }
+
+  .title-block {
+    position: relative;
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.88;
+    color: var(--black);
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 2;
+  }
+
+  h1 .highlight {
+    color: var(--hot-pink);
+    display: block;
+    -webkit-text-stroke: 2px var(--hot-pink);
+  }
+
+  h1 .outline {
+    -webkit-text-stroke: 3px var(--black);
+    color: transparent;
+    display: block;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    margin-top: 16px;
+    opacity: 0.6;
+    max-width: 400px;
+  }
+
+  .header-deco {
+    position: absolute;
+    right: 40px;
+    top: 40px;
+    width: 120px;
+    height: 120px;
+    border: 3px solid var(--black);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    animation: spin-slow 20s linear infinite;
+  }
+
+  .header-deco span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    line-height: 1.6;
+  }
+
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-section {
+    padding: 40px 40px 0;
+  }
+
+  .progress-bar-track {
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    position: relative;
+    overflow: visible;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--hot-pink);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: -4px;
+    width: 11px;
+    height: 11px;
+    background: var(--hot-pink);
+    border-radius: 50%;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+  }
+
+  /* ===== QUIZ CONTAINER ===== */
+  .quiz-wrap {
+    padding: 40px;
+    max-width: 900px;
+  }
+
+  /* ===== QUESTION ===== */
+  .question-block {
+    display: none;
+    animation: slide-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .question-block.active {
+    display: block;
+  }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateX(30px) scale(0.98); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+  }
+
+  .q-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 140px;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(0,0,0,0.1);
+    position: absolute;
+    right: 0;
+    top: -30px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .q-header {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .q-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(22px, 3.5vw, 34px);
+    line-height: 1.25;
+    font-style: italic;
+    max-width: 620px;
+  }
+
+  /* ===== OPTIONS ===== */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .q-number { font-size: 90px; }
+    .header-deco { display: none; }
+  }
+
+  .option-btn {
+    background: white;
+    border: 2px solid var(--black);
+    padding: 20px 22px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: 4px 4px 0 var(--black);
+  }
+
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--electric-yellow);
+    transform: translateX(-101%);
+    transition: transform 0.2s ease;
+    z-index: 0;
+  }
+
+  .option-btn:hover::before {
+    transform: translateX(0);
+  }
+
+  .option-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--black);
+  }
+
+  .option-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--black);
+  }
+
+  .option-btn.selected {
+    background: var(--black);
+    color: var(--cream);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--hot-pink);
+  }
+
+  .option-btn.selected::before {
+    display: none;
+  }
+
+  .option-letter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s;
+  }
+
+  .option-btn:hover .option-letter {
+    color: var(--black);
+  }
+
+  .option-btn.selected .option-letter {
+    color: var(--hot-pink);
+  }
+
+  .option-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== NAV ===== */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+  }
+
+  .btn-next {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    background: var(--black);
+    color: var(--electric-yellow);
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 4px 4px 0 var(--hot-pink);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-next.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  .btn-next:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--hot-pink);
+  }
+
+  .btn-back {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0.35;
+    text-decoration: underline;
+    transition: opacity 0.2s;
+    font-weight: 700;
+  }
+
+  .btn-back:hover { opacity: 0.7; }
+
+  /* ===== RESULTS ===== */
+  .result-screen {
+    display: none;
+    padding: 40px;
+    animation: slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .result-screen.active {
+    display: block;
+  }
+
+  .result-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 12px;
+  }
+
+  .result-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 15vw, 180px);
+    line-height: 0.85;
+    color: var(--hot-pink);
+    -webkit-text-stroke: 3px var(--hot-pink);
+    margin-bottom: 24px;
+  }
+
+  .result-desc {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.5vw, 24px);
+    line-height: 1.55;
+    max-width: 580px;
+    margin-bottom: 40px;
+  }
+
+  .result-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .trait-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 6px 14px;
+    border: 2px solid var(--black);
+    display: inline-block;
+  }
+
+  /* Score breakdown */
+  .score-breakdown {
+    margin-bottom: 40px;
+  }
+
+  .score-breakdown h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    opacity: 0.4;
+    margin-bottom: 16px;
+  }
+
+  .score-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 500px;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .score-name {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    width: 80px;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  .score-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .score-fill {
+    height: 100%;
+    background: var(--black);
+    transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: var(--delay);
+  }
+
+  .score-row.winner .score-fill {
+    background: var(--hot-pink);
+  }
+
+  .score-val {
+    font-size: 10px;
+    opacity: 0.5;
+    width: 24px;
+    text-align: right;
+  }
+
+  .btn-restart {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.1em;
+    background: transparent;
+    color: var(--black);
+    border: 2px solid var(--black);
+    padding: 14px 40px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 3px 3px 0 var(--black);
+  }
+
+  .btn-restart:hover {
+    background: var(--black);
+    color: var(--cream);
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--hot-pink);
+  }
+
+  /* ===== DECORATIVE STRIPS ===== */
+  .ticker-strip {
+    background: var(--black);
+    color: var(--electric-yellow);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    padding: 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 40px 0 0;
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 18s linear infinite;
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .divider-line {
+    border: none;
+    border-top: 2px solid var(--black);
+    margin: 40px 40px 0;
+    opacity: 0.12;
+  }
+
+  /* ===== COLOR ACCENTS FOR RESULT CHARS ===== */
+  .char-Amy    { --accent: #38BDF8; }
+  .char-Claire { --accent: #A78BFA; }
+  .char-Gina   { --accent: #FF6B35; }
+  .char-Kim    { --accent: #FF2D6B; }
+  .char-Dora   { --accent: #00E5A0; }
+  .char-Shreeja{ --accent: #FFE033; }
+  .char-Phoebe { --accent: #FCA5A5; }
+  .char-Elle   { --accent: #F472B6; }
+
+  .result-name, .char-Amy .result-name     { color: var(--accent, var(--hot-pink)); -webkit-text-stroke-color: var(--accent, var(--hot-pink)); }
+  .char-Amy .trait-pill    { border-color: var(--accent); background: var(--accent); }
+  .char-Claire .trait-pill { border-color: var(--accent); background: var(--accent); }
+  .char-Gina .trait-pill   { border-color: var(--accent); background: var(--accent); }
+  .char-Kim .trait-pill    { border-color: var(--accent); background: var(--accent); }
+  .char-Dora .trait-pill   { border-color: var(--accent); background: var(--accent); }
+  .char-Shreeja .trait-pill{ border-color: var(--accent); background: var(--accent); }
+  .char-Phoebe .trait-pill { border-color: var(--accent); background: var(--accent); }
+  .char-Elle .trait-pill   { border-color: var(--accent); background: var(--accent); }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">✦ PERSONALITY QUIZ ✦</div>
+  <div class="title-block">
+    <h1>
+      <span class="outline">WHO</span>
+      <span class="highlight">ACTUALLY</span>
+      ARE YOU?
+    </h1>
+  </div>
+  <p class="subtitle">10 questions. No sugarcoating. Find your character.</p>
+  <div class="header-deco">
+    <span>FIND<br>YOUR<br>VIBE</span>
+  </div>
+</div>
+
+<div class="ticker-strip">
+  <div class="ticker-inner">
+    AMY &nbsp;✦&nbsp; CLAIRE &nbsp;✦&nbsp; GINA &nbsp;✦&nbsp; KIM &nbsp;✦&nbsp; DORA &nbsp;✦&nbsp; SHREEJA &nbsp;✦&nbsp; PHOEBE &nbsp;✦&nbsp; ELLE &nbsp;✦&nbsp; AMY &nbsp;✦&nbsp; CLAIRE &nbsp;✦&nbsp; GINA &nbsp;✦&nbsp; KIM &nbsp;✦&nbsp; DORA &nbsp;✦&nbsp; SHREEJA &nbsp;✦&nbsp; PHOEBE &nbsp;✦&nbsp; ELLE &nbsp;✦&nbsp; AMY &nbsp;✦&nbsp; CLAIRE &nbsp;✦&nbsp; GINA &nbsp;✦&nbsp; KIM &nbsp;✦&nbsp; DORA &nbsp;✦&nbsp; SHREEJA &nbsp;✦&nbsp; PHOEBE &nbsp;✦&nbsp; ELLE &nbsp;✦&nbsp;
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+  <div class="progress-label">
+    <span id="progressText">QUESTION 0 OF 10</span>
+    <span id="progressPct">0%</span>
+  </div>
+</div>
+
+<div class="quiz-wrap" id="quizWrap">
+  <!-- Questions injected by JS -->
+</div>
+
+<div class="result-screen" id="resultScreen">
+  <!-- Result injected by JS -->
+</div>
+
+<hr class="divider-line" id="footerDivider">
+
+<script>
+const questions = [
+  {
+    text: "The group chat is fighting. You?",
+    options: [
+      { letter: "A", text: "Send a 40-page PDF of the rules", chars: ["Claire", "Amy"] },
+      { letter: "B", text: "Screenshot and send to your other group chat", chars: ["Kim", "Gina"] },
+      { letter: "C", text: 'Ask the screen: "Can YOU see the drama?"', chars: ["Dora"] },
+      { letter: "D", text: "Respond with a thumbs-up emoji 3 hours later", chars: ["Shreeja"] }
+    ]
+  },
+  {
+    text: "You're 20 minutes late. Why?",
+    options: [
+      { letter: "A", text: 'I\'m not late, I\'m "making an entrance"', chars: ["Gina", "Kim"] },
+      { letter: "B", text: "I saw a cool rock and followed it", chars: ["Dora", "Phoebe"] },
+      { letter: "C", text: "I tripped over my own shadow", chars: ["Phoebe"] },
+      { letter: "D", text: "I was re-ironing my socks", chars: ["Amy"] }
+    ]
+  },
+  {
+    text: 'Someone says "You can\'t do that." Your move?',
+    options: [
+      { letter: "A", text: '"Watch me do it in pink heels"', chars: ["Elle"] },
+      { letter: "B", text: '"I\'ve already done it, and I did it better"', chars: ["Claire", "Gina"] },
+      { letter: "C", text: "Stare at them until they apologize for existing", chars: ["Shreeja"] },
+      { letter: "D", text: "Ask them to repeat that into your vlog camera", chars: ["Kim"] }
+    ]
+  },
+  {
+    text: "You have a massive deadline tomorrow. You...",
+    options: [
+      { letter: "A", text: "Have been done for three weeks", chars: ["Amy", "Claire"] },
+      { letter: "B", text: 'Forget what "tomorrow" means', chars: ["Phoebe"] },
+      { letter: "C", text: "Hire someone else and take the credit", chars: ["Gina", "Kim"] },
+      { letter: "D", text: 'Start a 12-hour "research" mission in the woods', chars: ["Dora"] }
+    ]
+  },
+  {
+    text: "How do you handle a minor inconvenience?",
+    options: [
+      { letter: "A", text: "A full-blown, televised mental breakdown", chars: ["Kim"] },
+      { letter: "B", text: "I scream into a color-coded pillow", chars: ["Claire"] },
+      { letter: "C", text: "I play a very sad song on a guitar", chars: ["Phoebe"] },
+      { letter: "D", text: "I simply... ignore the passage of time", chars: ["Shreeja"] }
+    ]
+  },
+  {
+    text: "Pick a weapon of choice:",
+    options: [
+      { letter: "A", text: "A label maker", chars: ["Amy"] },
+      { letter: "B", text: "A legal brief", chars: ["Elle"] },
+      { letter: "C", text: "Pure, unadulterated sarcasm", chars: ["Gina"] },
+      { letter: "D", text: "A backpack that talks", chars: ["Dora"] }
+    ]
+  },
+  {
+    text: "You see your ex at a party. Reaction?",
+    options: [
+      { letter: "A", text: "Look 10x hotter than them immediately", chars: ["Kim", "Elle"] },
+      { letter: "B", text: '"Where are we going?" (completely unbothered)', chars: ["Dora"] },
+      { letter: "C", text: 'Tell them their outfit is a "hate crime"', chars: ["Gina"] },
+      { letter: "D", text: "Walk into a wall while trying to look cool", chars: ["Phoebe"] }
+    ]
+  },
+  {
+    text: 'What\'s your "Love Language"?',
+    options: [
+      { letter: "A", text: "Telling people exactly what they're doing wrong", chars: ["Claire", "Amy"] },
+      { letter: "B", text: "Gift cards to yourself", chars: ["Gina", "Kim"] },
+      { letter: "C", text: "Finding a shortcut through a jungle", chars: ["Dora"] },
+      { letter: "D", text: "Speaking... very... specifically", chars: ["Shreeja"] }
+    ]
+  },
+  {
+    text: "Your phone is at 1%. What do you do?",
+    options: [
+      { letter: "A", text: "Nothing. I have three power banks", chars: ["Amy", "Claire"] },
+      { letter: "B", text: "Accept it as a sign from the spirits", chars: ["Phoebe"] },
+      { letter: "C", text: "Panic because the world needs to see my face", chars: ["Kim"] },
+      { letter: "D", text: '"Vamanos! Let\'s find a charger!"', chars: ["Dora"] }
+    ]
+  },
+  {
+    text: 'Pick a "Vibe":',
+    options: [
+      { letter: "A", text: '"Get your ass up and work"', chars: ["Kim"] },
+      { letter: "B", text: '"I\'m the human embodiment of a Google Calendar"', chars: ["Amy", "Claire"] },
+      { letter: "C", text: '"I\'m just... here."', chars: ["Shreeja"] },
+      { letter: "D", text: '"Everything is solvable with a song"', chars: ["Phoebe", "Elle"] }
+    ]
+  }
+];
+
+const characters = {
+  Amy: {
+    desc: "You are a walking, talking productivity system. Your planner has a planner. You've color-coded your sleep schedule. You love people enough to correct them — loudly, specifically, and with a laminated reference sheet.",
+    traits: ["HYPER-ORGANIZED", "DETAIL-OBSESSED", "LOVINGLY BOSSY", "NEVER LATE"]
+  },
+  Claire: {
+    desc: "You are the type-A overlord of every room you walk into. Your Google Calendar is a love language. You don't spiral — you make a spreadsheet *about* spiraling. And honestly? It works.",
+    traits: ["SPREADSHEET QUEEN", "CONTROLLED CHAOS", "AGGRESSIVELY HELPFUL", "COLOR-CODED FEELINGS"]
+  },
+  Gina: {
+    desc: "You are the human equivalent of a sarcastic eyebrow raise. You've already done whatever someone dares you to do, you did it better, and you took the credit. No notes, no apologies.",
+    traits: ["ZERO APOLOGIES", "SARCASM AS ART", "INTIMIDATINGLY CAPABLE", "FASHIONABLY LATE"]
+  },
+  Kim: {
+    desc: "You are a walking content opportunity. Every emotion is a potential story arc. You look hot at all times, handle setbacks with theatrical flair, and your hustle is, frankly, unhinged.",
+    traits: ["MAIN CHARACTER ENERGY", "CAMERA-READY ALWAYS", "DRAMATIC BUT CORRECT", "GRIND NEVER STOPS"]
+  },
+  Dora: {
+    desc: "You are chronically curious and spatially unmoored. You followed a cool rock here. You don't know where 'here' is. Your backpack contains everything including a live animal. Adventure is your default mode.",
+    traits: ["PERPETUALLY LOST", "GENUINELY DELIGHTED", "BACKPACK ENTHUSIAST", "ASKS THE SCREEN"]
+  },
+  Shreeja: {
+    desc: "You operate outside of linear time. You observe situations from a philosophical distance. Your thumbs-up arrives three hours late, but it carries the weight of a thousand unspoken words.",
+    traits: ["ABOVE IT ALL", "MYSTERIOUSLY CALM", "SELECTIVE COMMUNICATOR", "TIME IS A CONSTRUCT"]
+  },
+  Phoebe: {
+    desc: "You are chaos in a cardigan. Trips over your own shadow, plays a sad song about it, then considers it a spiritual experience. The world is confusing but music makes everything better.",
+    traits: ["BEAUTIFULLY CLUMSY", "EMOTIONALLY MUSICAL", "SPIRITUALLY WANDERING", "ROCK FOLLOWER"]
+  },
+  Elle: {
+    desc: "You are the blueprint. Armed with a legal brief and impossible heels, you prove every skeptic wrong before they finish their sentence. Your confidence has its own zip code.",
+    traits: ["HEELS OF JUSTICE", "LEGALLY UNSTOPPABLE", "NATURALLY ICONIC", "PROVES EVERYONE WRONG"]
+  }
+};
+
+let answers = {};
+let currentQ = 0;
+
+function init() {
+  const wrap = document.getElementById('quizWrap');
+  wrap.innerHTML = '';
+  questions.forEach((q, i) => {
+    const block = document.createElement('div');
+    block.className = 'question-block' + (i === 0 ? ' active' : '');
+    block.id = 'q' + i;
+
+    block.innerHTML = `
+      <div class="q-header">
+        <div class="q-number">${String(i+1).padStart(2,'0')}</div>
+        <div class="q-label">QUESTION ${i+1} OF ${questions.length}</div>
+        <div class="q-text">${q.text}</div>
+      </div>
+      <div class="options-grid">
+        ${q.options.map((o, oi) => `
+          <button class="option-btn" data-q="${i}" data-o="${oi}" onclick="selectOption(${i}, ${oi}, this)">
+            <span class="option-letter">${o.letter}</span>
+            <span class="option-text">${o.text}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack()" ${i === 0 ? 'style="visibility:hidden"' : ''}>← BACK</button>
+        <button class="btn-next" id="nextBtn${i}" onclick="nextQuestion(${i})">
+          ${i < questions.length - 1 ? 'NEXT →' : 'SEE MY RESULT →'}
+        </button>
+      </div>
+    `;
+    wrap.appendChild(block);
+  });
+  updateProgress();
+}
+
+function selectOption(qIdx, oIdx, btn) {
+  const block = document.getElementById('q' + qIdx);
+  block.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[qIdx] = oIdx;
+  const nextBtn = document.getElementById('nextBtn' + qIdx);
+  nextBtn.classList.add('visible');
+}
+
+function nextQuestion(qIdx) {
+  if (answers[qIdx] === undefined) return;
+  const curr = document.getElementById('q' + qIdx);
+  curr.classList.remove('active');
+  if (qIdx < questions.length - 1) {
+    currentQ = qIdx + 1;
+    const next = document.getElementById('q' + currentQ);
+    next.classList.add('active');
+    // restore selection if revisiting
+    if (answers[currentQ] !== undefined) {
+      const btns = next.querySelectorAll('.option-btn');
+      btns[answers[currentQ]].classList.add('selected');
+      document.getElementById('nextBtn' + currentQ).classList.add('visible');
+    }
+    updateProgress();
+  } else {
+    showResult();
+  }
+}
+
+function goBack() {
+  if (currentQ === 0) return;
+  const curr = document.getElementById('q' + currentQ);
+  curr.classList.remove('active');
+  currentQ--;
+  const prev = document.getElementById('q' + currentQ);
+  prev.classList.add('active');
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((currentQ / questions.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `QUESTION ${currentQ + 1} OF ${questions.length}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function calcScores() {
+  const scores = {};
+  Object.keys(characters).forEach(c => scores[c] = 0);
+  Object.entries(answers).forEach(([qIdx, oIdx]) => {
+    const option = questions[qIdx].options[oIdx];
+    const share = 1 / option.chars.length;
+    option.chars.forEach(c => { scores[c] = (scores[c] || 0) + share; });
+  });
+  return scores;
+}
+
+function showResult() {
+  document.getElementById('quizWrap').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressText').textContent = 'COMPLETE';
+  document.getElementById('progressPct').textContent = '100%';
+
+  const scores = calcScores();
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const winner = sorted[0][0];
+  const maxScore = sorted[0][1];
+  const char = characters[winner];
+
+  const rs = document.getElementById('resultScreen');
+  rs.className = 'result-screen active char-' + winner;
+
+  const barsHTML = sorted.map(([name, score], i) => `
+    <div class="score-row ${name === winner ? 'winner' : ''}">
+      <div class="score-name">${name.toUpperCase()}</div>
+      <div class="score-track">
+        <div class="score-fill" style="width: 0%; --delay: ${i * 0.1}s" data-width="${Math.round((score / maxScore) * 100)}"></div>
+      </div>
+      <div class="score-val">${Math.round(score * 10)}</div>
+    </div>
+  `).join('');
+
+  rs.innerHTML = `
+    <div class="result-eyebrow">✦ YOUR RESULT ✦</div>
+    <div class="result-name">${winner.toUpperCase()}</div>
+    <p class="result-desc">${char.desc}</p>
+    <div class="result-traits">
+      ${char.traits.map(t => `<span class="trait-pill">${t}</span>`).join('')}
+    </div>
+    <div class="score-breakdown">
+      <h3>YOUR FULL BREAKDOWN</h3>
+      <div class="score-bars">${barsHTML}</div>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">TAKE IT AGAIN</button>
+  `;
+
+  // Animate score bars
+  setTimeout(() => {
+    rs.querySelectorAll('.score-fill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 100);
+}
+
+function restartQuiz() {
+  answers = {};
+  currentQ = 0;
+  document.getElementById('resultScreen').className = 'result-screen';
+  document.getElementById('quizWrap').style.display = '';
+  init();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+init();
+</script>
+</body>
+</html>
